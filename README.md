@@ -1,2 +1,6 @@
 # relog
-a tera-proxy module to switch character by chat command
+
+### Usage
+`!relog name` in chat
+
+[slash](https://github.com/baldera-mods/slash) is supported but not required
