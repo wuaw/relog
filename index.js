@@ -52,8 +52,12 @@ module.exports = function Relog(dispatch) {
 	function relog(targetId) {
 		if (!targetId) return
 		dispatch.toServer('C_RETURN_TO_LOBBY', 1, {})
-		dispatch.toClient('S_RETURN_TO_LOBBY', 1, {})
 
+		// make sure that the client is able to log out
+		const prepareLobbyHook = hookNext('S_PREPARE_RETURN_TO_LOBBY', 1, event => {
+			dispatch.toClient('S_RETURN_TO_LOBBY', 1, {})
+		})
+		
 		// the server is not ready yet, displaying "Loading..." as char names
 		const userListHook = hookNext('S_GET_USER_LIST', 1, event => {
 			event.characters.forEach(char => char.name = 'Loading...')
@@ -67,7 +71,7 @@ module.exports = function Relog(dispatch) {
 
 		// hook timeout, in case something goes wrong
 		setTimeout(() => {
-			for (const hook of [lobbyHook, userListHook])
+			for (const hook of [prepareLobbyHook, lobbyHook, userListHook])
 				if (hook) dispatch.unhook(hook)
 		}, 15000)
 	}
