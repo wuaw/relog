@@ -6,4 +6,4 @@
 [slash](https://github.com/baldera-mods/slash) is supported but not required
 
 ### Known Issues
-If you get hit within 10 seconds of using `!relog`, the client and server state will be desynced and you will have to restart client.
+If your character gets hit within 10 seconds of using `!relog`, the client and server state will be desynced and you will have to restart client.
