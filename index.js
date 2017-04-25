@@ -35,13 +35,13 @@ module.exports = function Relog(dispatch) {
 					if (char.name.toLowerCase() === name.toLowerCase())
 						resolve(char.id)
 				})
-				reject(new Error(`[fast-relog] character "${name}" not found`))
+				reject(new Error(`[relog] character "${name}" not found`))
 			})
 
 			// set a timeout for the request, in case something went wrong
 			setTimeout(() => {
 				if (userListHook) dispatch.unhook(userListHook)
-				reject(new Error('[fast-relog] C_GET_USER_LIST request timed out'))
+				reject(new Error('[relog] C_GET_USER_LIST request timed out'))
 			}, 5000)
 
 			// request the character list
