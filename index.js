@@ -30,7 +30,7 @@ module.exports = function Relog(dispatch) {
 	function getCharacterId(name) {
 		return new Promise((resolve, reject) => {
 			// request handler, resolves with character's playerId
-			const userListHook = hookNext('S_GET_USER_LIST', 1, event => {
+			const userListHook = dispatch.hookOnce('S_GET_USER_LIST', 1, event => {
 				event.characters.forEach(char => {
 					if (char.name.toLowerCase() === name.toLowerCase())
 						resolve(char.id)
@@ -54,19 +54,19 @@ module.exports = function Relog(dispatch) {
 		dispatch.toServer('C_RETURN_TO_LOBBY', 1, {})
 		let userListHook
 		let lobbyHook
-		
+
 		// make sure that the client is able to log out
-		const prepareLobbyHook = hookNext('S_PREPARE_RETURN_TO_LOBBY', 1, event => {
+		const prepareLobbyHook = dispatch.hookOnce('S_PREPARE_RETURN_TO_LOBBY', 1, event => {
 			dispatch.toClient('S_RETURN_TO_LOBBY', 1, {})
 
 			// the server is not ready yet, displaying "Loading..." as char names
-			userListHook = hookNext('S_GET_USER_LIST', 1, event => {
+			userListHook = dispatch.hookOnce('S_GET_USER_LIST', 1, event => {
 				event.characters.forEach(char => char.name = 'Loading...')
 				return true
 			})
 
 			// the server is ready to relog to a new character
-			lobbyHook = hookNext('S_RETURN_TO_LOBBY', 1, event => {
+			lobbyHook = dispatch.hookOnce('S_RETURN_TO_LOBBY', 1, event => {
 				dispatch.toServer('C_SELECT_USER', 1, { id: targetId, unk: 0 })
 			})
 		})
@@ -76,15 +76,6 @@ module.exports = function Relog(dispatch) {
 			for (const hook of [prepareLobbyHook, lobbyHook, userListHook])
 				if (hook) dispatch.unhook(hook)
 		}, 15000)
-	}
-
-	function hookNext(...args) {
-		const cb = args.pop()
-		let hook
-		return hook = dispatch.hook(...args, (...cbArgs) => {
-			dispatch.unhook(hook)
-			return cb(...cbArgs)
-		})
 	}
 
 	// slash support
