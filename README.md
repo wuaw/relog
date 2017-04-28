@@ -7,3 +7,5 @@
 
 ### Known Issues
 If your character gets hit within 10 seconds of using `!relog`, the client and server state will be desynced and you will have to restart client.
+
+If you use `!relog` while dead, the client will crash.
